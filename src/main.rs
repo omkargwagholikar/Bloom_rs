@@ -80,13 +80,20 @@ fn add(hash: &str, filename: &str) {
     }
 }
 fn main() {
-    println!("Hello, world!");
-    let filename = "/home/omkar/Desktop/bloom_rs/src/bloom.txt";
-    let bf = BloomFilter::new(&filename);
-    let input = "somename1";
-    let hash = digest(input);
+    // println!("Hello, world!");
+    // let filename = "/home/omkar/Desktop/bloom_rs/src/bloom.txt";
+    // let bf = BloomFilter::new(&filename);
+    // let input = "somename1";
+    // let hash = digest(input);
     
-    println!("{}", exists(&hash, filename));
-    add(&hash, filename);
-    println!("{}", exists(&hash, filename));
+    // println!("{}", exists(&hash, filename));
+    // add(&hash, filename);
+    // println!("{}", exists(&hash, filename));
+
+    let filename = "/home/omkar/Desktop/bloom_rs/src/bloom.txt";
+    let bf = BloomFilter::new(filename);
+    let input = "omkar";
+    println!( "{}", bf.exists(input));
+    bf.add(input);
+    println!( "{}", bf.exists(input)); 
 }
