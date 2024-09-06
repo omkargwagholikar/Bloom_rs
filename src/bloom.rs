@@ -45,7 +45,7 @@ impl BloomFilter {
         buffer[0] == 0x01
     }
 
-    pub fn set_posn(&self, position: u64) {
+    fn set_posn(&self, position: u64) {
         let mut file = OpenOptions::new()
             .write(true)
             .open(&self.filename)

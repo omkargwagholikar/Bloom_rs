@@ -4,7 +4,7 @@ use std::fs;
 #[test]
 fn add_new() {
     println!("Testing adding new value");
-    let filename = "/home/omkar/Desktop/bloom_rs/tests/bloom_test.txt";
+    let filename = "tests/bloom_test.txt";
     let input = "test";
     let bf = BloomFilter::new(filename);
     bf.clear_data();
@@ -15,4 +15,3 @@ fn add_new() {
     assert_eq!(after, true, "Input should exist in the filter after adding");
     fs::remove_file(filename).expect("test file deleted");
 }
-

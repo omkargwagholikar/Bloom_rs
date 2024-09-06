@@ -2,9 +2,10 @@ mod bloom;
 use bloom::BloomFilter;
 
 fn main() {
-    let filename = "/home/omkar/Desktop/bloom_rs/src/bloom.txt";
+    let filename = "src/bloom_data.txt";
     let bf = BloomFilter::new(filename);
-    let input = "omkar1";
+    bf.clear_data();
+    let input = "omkar";
     println!( "{}", bf.exists(input));
     bf.add(input);
     println!( "{}", bf.exists(input)); 
