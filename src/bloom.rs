@@ -1,7 +1,13 @@
 use sha256::digest;
-use std::{fs::{read_to_string, OpenOptions}, io::{Read, Seek, SeekFrom, Write}};
-
-use crate::get_hash;
+use std::{
+    fs::OpenOptions, 
+    io::{
+        Read, 
+        Seek, 
+        SeekFrom, 
+        Write
+    }
+};
 
 pub struct BloomFilter {
     filename: String,
@@ -14,16 +20,7 @@ impl BloomFilter {
         }
     }
 
-    pub fn read_lines(&self) -> Vec<String> {
-        let mut result = Vec::new();
-    
-        for line in read_to_string(&self.filename).unwrap().lines() {
-            result.push(line.to_string())
-        }
-    
-        result
-    }
-
+    #[allow(dead_code)] // this function is being used in testing
     pub fn clear_data(&self) {
         let mut file = OpenOptions::new()
             .write(true)
@@ -57,7 +54,7 @@ impl BloomFilter {
         file.write_all(&[0x01]).expect("Error in writing to file");
     }
 
-    pub fn get_hash(input: &str) -> String {
+    pub fn get_hash(&self, input: &str) -> String {
         digest(input)
     }
 
@@ -71,7 +68,7 @@ impl BloomFilter {
 
     pub fn exists(&self, input: &str) -> bool {
         let mut flag = true;
-        let hash = get_hash(input);
+        let hash = &self.get_hash(input);
         let chars: Vec<char> = hash.chars().collect();
         for i in 0..chars.len() {
             if !self.is_set(self.get_posn(i.try_into().unwrap(), chars[i])) {
@@ -83,7 +80,7 @@ impl BloomFilter {
     }
 
     pub fn add(&self, input: &str) {
-        let hash = get_hash(input);
+        let hash = &self.get_hash(input);
         let chars: Vec<char> = hash.chars().collect();
         for i in 0..chars.len() {
             self.set_posn(self.get_posn(i.try_into().unwrap(), chars[i]));
