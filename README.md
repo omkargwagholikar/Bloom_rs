@@ -11,24 +11,24 @@
 ## Build and executing
 Please make sure you have rust installed.
 
-'''bash
+```bash
 git clone https://github.com/omkargwagholikar/Bloom_rs.git
-'''
+```
 
 Install relevant documents 
 
-'''bash
+```bash
 cargo build
-'''
+```
 
 Run the tests
 
-'''bash
+```bash
 cargo test
-'''
+```
 
 Run bloom code
 
-'''bash
+```bash
 cargo run
-'''
+```
