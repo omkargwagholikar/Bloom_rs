@@ -1,3 +1,4 @@
+# Bloom rs
 
 ## Working of a Bloom Filter
 
@@ -9,10 +10,16 @@
 ### Deleting an item in the set
 
 ## Build and executing
+
 Please make sure you have rust installed.
 
 ```bash
 git clone https://github.com/omkargwagholikar/Bloom_rs.git
+```
+Navigate into the folder
+
+```bash
+cd Bloom_rs
 ```
 
 Install relevant documents 
