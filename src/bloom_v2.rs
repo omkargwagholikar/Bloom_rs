@@ -1,23 +1,25 @@
 use std::fs::File;
-use std::io::Write;
+use std::io::{BufRead, BufReader, ErrorKind, Write};
 use sha2::Digest;
+use std::io::Error;
+use std::sync::RwLock;
+
 pub struct BloomFilter {
     filename: String, // For writing the bit_vector to disk for persistence
-    bit_vector: Vec<u8>,
-    size: u64,
-    hash_count:i32
-    //  Add mutex here
+    bit_vector: RwLock<Vec<u8>>,
+    size: usize,
+    hash_count:i32,
 }
 
 impl BloomFilter {
-    pub fn new(filename: String, size: u64, hash_count: i32) -> Self {
+    pub fn new(filename: String, size: usize, hash_count: i32) -> Self {
         if size & (size-1) != 0 {
             println!("The size must be a power of 2");
         }
 
         Self {
             filename,
-            bit_vector: vec![0; size as usize],
+            bit_vector: RwLock::new(vec![0; size as usize]),
             size,
             hash_count
         }
@@ -30,7 +32,8 @@ impl BloomFilter {
         }
         
         // Accquire write lock
-        self.bit_vector[position] = 1;
+        let mut bit_vector = self.bit_vector.write().unwrap();
+        bit_vector[position] = 1;
         // Release write lock
     }
 
@@ -40,7 +43,8 @@ impl BloomFilter {
             return 0 as u8;
         }
         // Accquire read lock
-        self.bit_vector[position]
+        let bit_vector = self.bit_vector.read().unwrap();
+        bit_vector[position]
         // Release read lock
     }
 
@@ -82,10 +86,43 @@ impl BloomFilter {
     }
 
     pub fn write(& self) {
-        let mut f = File::create(&self.filename).expect("Unable to create file");                                                                                                          
-        for i in &self.bit_vector{                                                                                                                                                                  
+        let mut f = File::create(&self.filename).expect("Unable to create file");
+        let bit_vector = self.bit_vector.read().unwrap();
+        writeln!(f, "{}", self.size).expect("Trouble writing to file");
+        writeln!(f, "{}", self.hash_count).expect("Trouble writing to file");
+
+        for i in bit_vector.iter() {
             f.write_all(&[*i]).expect("Unable to write data");                                                                                                                            
         } 
+    }
+
+    pub fn load(&mut self, filepath: &str)  {
+        let f = File::open(filepath).expect("Error in opening the file for loading");
+        let br = BufReader::new(f);
+        // create an empty vector, type of the stored elements will be inferred
+        let mut v = Vec::new();
+        // br.lines() creates an iterator over lines in the reader
+        let mut count = 0;
+
+        for line in br.lines() {
+            count += 1;
+            if count == 3 {
+                break;
+            }
+            let line = line.unwrap();
+            let n: usize = line   
+                .trim() 
+                .parse()
+                .map_err(|e| Error::new(ErrorKind::InvalidData, e))
+                .expect("Error in parsing the file");
+            v.push(n);
+        }
+
+        self.filename = filepath.to_owned();
+        self.size = v[0];
+        self.hash_count = v[1] as i32;
+        // let mut bit_vector = self.bit_vector.write().expect("Could not get lock to load file");
+        // f.read_to_end(&mut bit_vector).expect("Could not get lock to load file");
     }
 
 }
