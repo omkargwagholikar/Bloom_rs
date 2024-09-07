@@ -9,11 +9,11 @@ use std::{
     }
 };
 
-pub struct BloomFilter {
+pub struct BloomFilterV1 {
     filename: String,
 }
 
-impl BloomFilter {
+impl BloomFilterV1 {
     pub fn new(filename: &str) -> Self {
         Self {
             filename: filename.to_string(),
